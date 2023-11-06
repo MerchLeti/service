@@ -47,11 +47,16 @@ func (r *Request) WriteError(err error) {
 
 func (r *Request) write(status int, wrapped *entities.Result) {
 	b, err := json.Marshal(wrapped)
+	useJson := true
 	if err != nil {
 		b = []byte(fmt.Sprintf("couldn't marshal response to json: %v", err))
 		status = http.StatusInternalServerError
+		useJson = false
 	}
 	r.Writer.WriteHeader(status)
+	if useJson {
+		r.Writer.Header().Add("Content-Type", "application/json")
+	}
 	if _, err := r.Writer.Write(b); err != nil {
 		log.Printf("couldn't write response: %v\n", err)
 	}
