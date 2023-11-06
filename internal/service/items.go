@@ -141,12 +141,22 @@ func (s *ItemsService) getItemSummary(ctx context.Context, item int64) (price, a
 	if err != nil {
 		return
 	}
+	if len(types) == 0 {
+		return
+	}
 	price = math.MaxInt
+	priceFromAll := math.MaxInt
 	for _, t := range types {
 		available += t.Available
 		if t.Available > 0 && t.Price < price {
 			price = t.Price
 		}
+		if t.Price < priceFromAll {
+			priceFromAll = t.Price
+		}
+	}
+	if available == 0 {
+		price = priceFromAll
 	}
 	return
 }
