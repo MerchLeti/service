@@ -40,10 +40,21 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  perform-migrations:
-    needs: [ build-and-push-image ]
+  check-dsn:
     runs-on: ubuntu-latest
-    if: ${{ secrets.DSN != '' }}
+    outputs:
+      exists: ${{ steps.check.outputs.result }}
+    steps:
+      - id: check
+        env:
+          DSN: ${{ secrets.DSN }}
+        if: ${{ env.DSN != '' }}
+        run: echo "::set-output name=result::true"
+
+  perform-migrations:
+    needs: [ build-and-push-image, check-dsn ]
+    runs-on: ubuntu-latest
+    if: needs.check-dsn.outputs.exists == 'true'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
