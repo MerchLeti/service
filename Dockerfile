@@ -21,7 +21,7 @@ FROM alpine
 RUN apk add --no-cache openssl1.1-compat bash && adduser -D -h /home/container container
 
 USER container
-ENV USER=container HOME=/home/container GIN_MODE=release
+ENV USER=container HOME=/home/container
 WORKDIR /home/container
 
 COPY --from=builder /build/app /app
