@@ -40,8 +40,20 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
+  perform-migrations:
+    needs: [ build-and-push-image ]
+    runs-on: ubuntu-latest
+    if: ${{ secrets.DSN != '' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup go environment
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: 'go.mod'
+      - name: Install migration tool
+        run: go install github.com/pressly/goose/v3/cmd/goose@latest
       - name: Perform migrations
-        if: ${{ env.DSN != '' }}
         run: make migration-up
         env:
           DSN: ${{ secrets.DSN }}
