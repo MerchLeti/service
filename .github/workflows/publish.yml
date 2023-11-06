@@ -49,7 +49,7 @@ jobs:
         env:
           DSN: ${{ secrets.DSN }}
         if: ${{ env.DSN != '' }}
-        run: echo "::set-output name=result::true"
+        run: echo "result=true" >> $GITHUB_OUTPUT
 
   perform-migrations:
     needs: [ build-and-push-image, check-dsn ]
