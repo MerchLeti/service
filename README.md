@@ -62,11 +62,11 @@ Goose позволяет безболезненно вносить измене�
 При использовании Production-сборки, чтобы сервер запустился, нужно явно указать значение `/app` (при необходимости экранировав слэш в начале).\
 Если собрать локальную версию проекта, то эта переменная не используется.
 
-(**) Подразумевает наличие работающей базы данных с актуальной схемой. Если база данных доступна из localhost устройства, на котором запускается сервер, то в качестве адреса нужно передать `host.docker.internal` или использовать другой вариант [решения проблемы доступа к хост-машине из контейнера](https://stackoverflow.com/a/24326540).
+(**) Подразумевает наличие работающей базы данных. Если использовать Production-сборку, то база данных также должна быть в актуальном состоянии. В dev-образах образ также содержит инструмент автоматической миграции.
 
 ### Сборка локальной версии
 ```shell
-docker build -t ghcr.io/merchleti/service:dev -f local.Dockerfile .
+docker build -t ghcr.io/merchleti/service:local-dev -f dev.Dockerfile .
 ```
 
 ### Запуск из командной строки
@@ -76,9 +76,14 @@ docker build -t ghcr.io/merchleti/service:dev -f local.Dockerfile .
 docker run --env STARTUP='\/app' --env SERVER_PORT=8081 --env POSTGRES_HOST=host.docker.internal -p 8081:8081 -it ghcr.io/merchleti/service:main
 ```
 
+### Dev-сборка:
+```shell
+docker run --env SERVER_PORT=8081 --env POSTGRES_HOST=host.docker.internal -p 8081:8081 -it ghcr.io/merchleti/service:main-dev
+```
+
 #### Локальная версия:
 ```shell
-docker run --env STARTUP='\/app' --env SERVER_PORT=8081 --env POSTGRES_HOST=host.docker.internal -p 8081:8081 -it ghcr.io/merchleti/service:dev
+docker run --env SERVER_PORT=8081 --env POSTGRES_HOST=host.docker.internal -p 8081:8081 -it ghcr.io/merchleti/service:local-dev
 ```
 
 ### Пример docker-compose
@@ -92,12 +97,19 @@ services:
       POSTGRES_DB: shop
       POSTGRES_USER: shop
       POSTGRES_PASSWORD: shop
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     ports:
       - "5432:5432"
   shop:
-    image: ghcr.io/merchleti/service:main
+    image: ghcr.io/merchleti/service:main-dev
+    depends_on:
+      postgres:
+        condition: service_healthy
     environment:
-      STARTUP: /app
       SERVER_PORT: 8081
       POSTGRES_HOST: postgres
     ports:
