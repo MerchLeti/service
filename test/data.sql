@@ -13,14 +13,6 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
--- Dumping structure for table public.categories
-CREATE TABLE IF NOT EXISTS "categories" (
-	"id" BIGINT NOT NULL DEFAULT 'nextval(''categories_id_seq''::regclass)',
-	"name" TEXT NOT NULL,
-	"parent" BIGINT NULL DEFAULT NULL,
-	PRIMARY KEY ("id")
-);
-
 -- Dumping data for table public.categories: -1 rows
 /*!40000 ALTER TABLE "categories" DISABLE KEYS */;
 INSERT INTO "categories" ("id", "name", "parent") VALUES
@@ -28,16 +20,6 @@ INSERT INTO "categories" ("id", "name", "parent") VALUES
 	(2, 'Футболки', 1),
 	(3, 'Худи', 1);
 /*!40000 ALTER TABLE "categories" ENABLE KEYS */;
-
--- Dumping structure for table public.images
-CREATE TABLE IF NOT EXISTS "images" (
-	"id" BIGINT NOT NULL DEFAULT 'nextval(''images_id_seq''::regclass)',
-	"item" BIGINT NOT NULL,
-	"position" INTEGER NOT NULL,
-	"url" TEXT NOT NULL,
-	PRIMARY KEY ("id"),
-	INDEX "images_item" ("item")
-);
 
 -- Dumping data for table public.images: -1 rows
 /*!40000 ALTER TABLE "images" DISABLE KEYS */;
@@ -50,16 +32,6 @@ INSERT INTO "images" ("id", "item", "position", "url") VALUES
 	(6, 6, 1, 'https://raw.githubusercontent.com/MerchLeti/images/main/hoodies/6.png'),
 	(7, 7, 1, 'https://raw.githubusercontent.com/MerchLeti/images/main/hoodies/7.png');
 /*!40000 ALTER TABLE "images" ENABLE KEYS */;
-
--- Dumping structure for table public.items
-CREATE TABLE IF NOT EXISTS "items" (
-	"id" BIGINT NOT NULL DEFAULT 'nextval(''items_id_seq''::regclass)',
-	"name" TEXT NOT NULL,
-	"description" TEXT NOT NULL,
-	"category" BIGINT NULL DEFAULT NULL,
-	PRIMARY KEY ("id"),
-	INDEX "items_category" ("category")
-);
 
 -- Dumping data for table public.items: -1 rows
 /*!40000 ALTER TABLE "items" DISABLE KEYS */;
@@ -74,17 +46,6 @@ INSERT INTO "items" ("id", "name", "description", "category") VALUES
 	(6, 'Синий жэнский худак', 'Свитшоты давно выросли из футбольной формы и появились в гардеробах множества людей. Благодаря свободному крою уютные теплые кофты не сковывают движений', 3),
 	(7, 'Синий худак', 'Свитшоты давно выросли из футбольной формы и появились в гардеробах множества людей. Благодаря свободному крою уютные теплые кофты не сковывают движений', 3);
 /*!40000 ALTER TABLE "items" ENABLE KEYS */;
-
--- Dumping structure for table public.properties
-CREATE TABLE IF NOT EXISTS "properties" (
-	"id" BIGINT NOT NULL DEFAULT 'nextval(''properties_id_seq''::regclass)',
-	"item" BIGINT NOT NULL,
-	"name" TEXT NOT NULL,
-	"value" TEXT NOT NULL,
-	INDEX "properties_item" ("item"),
-	PRIMARY KEY ("id"),
-	INDEX "types_item" ("item")
-);
 
 -- Dumping data for table public.properties: 56 rows
 /*!40000 ALTER TABLE "properties" DISABLE KEYS */;
@@ -146,16 +107,6 @@ INSERT INTO "properties" ("id", "item", "name", "value") VALUES
 	(10, 2, 'Цвет', 'Красный'),
 	(2, 1, 'Цвет', 'Черный');
 /*!40000 ALTER TABLE "properties" ENABLE KEYS */;
-
--- Dumping structure for table public.types
-CREATE TABLE IF NOT EXISTS "types" (
-	"id" TEXT NOT NULL,
-	"item" BIGINT NOT NULL,
-	"name" TEXT NULL DEFAULT NULL,
-	"price" INTEGER NOT NULL,
-	"available" INTEGER NOT NULL DEFAULT '0',
-	PRIMARY KEY ("id", "item")
-);
 
 -- Dumping data for table public.types: -1 rows
 /*!40000 ALTER TABLE "types" DISABLE KEYS */;
