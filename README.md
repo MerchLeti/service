@@ -55,7 +55,7 @@ npm install
 npm run dev
 ```
 
-### prod-сборка:
+### Prod-сборка:
 ```sh
 npm run build
 ```
