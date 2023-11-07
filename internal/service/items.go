@@ -74,7 +74,7 @@ func (s *ItemsService) GetFromCategory(ctx context.Context, category int64, page
 	}
 	ans := make([]ItemSummary, 0, len(items))
 	for i := range items {
-		price, available, err := s.getItemSummary(ctx, items[i].ID)
+		bestType, price, available, err := s.getItemSummary(ctx, items[i].ID)
 		if err != nil {
 			return nil, err
 		}
@@ -82,7 +82,7 @@ func (s *ItemsService) GetFromCategory(ctx context.Context, category int64, page
 		if err != nil {
 			return nil, err
 		}
-		ans = append(ans, NewItemSummary(&items[i], avatar, price, available))
+		ans = append(ans, NewItemSummary(&items[i], avatar, bestType, price, available))
 	}
 	return ans, nil
 }
@@ -136,7 +136,11 @@ func (s *ItemsService) GetImages(ctx context.Context, id int64) ([]string, error
 	return s.images.GetAll(ctx, id)
 }
 
-func (s *ItemsService) getItemSummary(ctx context.Context, item int64) (price, available int, err error) {
+func (s *ItemsService) getItemSummary(ctx context.Context, item int64) (
+	bestType string,
+	price, available int,
+	err error,
+) {
 	types, err := s.types.GetAll(ctx, item)
 	if err != nil {
 		return
@@ -145,18 +149,23 @@ func (s *ItemsService) getItemSummary(ctx context.Context, item int64) (price, a
 		return
 	}
 	price = math.MaxInt
+	bestType = ""
 	priceFromAll := math.MaxInt
+	bestTypeFromAll := ""
 	for _, t := range types {
 		available += t.Available
 		if t.Available > 0 && t.Price < price {
 			price = t.Price
+			bestType = t.ID
 		}
 		if t.Price < priceFromAll {
 			priceFromAll = t.Price
+			bestTypeFromAll = t.ID
 		}
 	}
 	if available == 0 {
 		price = priceFromAll
+		bestType = bestTypeFromAll
 	}
 	return
 }

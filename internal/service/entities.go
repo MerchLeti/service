@@ -7,6 +7,7 @@ type ItemSummary struct {
 	Name       string `json:"name"`
 	CategoryID *int64 `json:"category,omitempty"`
 	Avatar     string `json:"avatar"`
+	BestType   string `json:"type"`
 	Price      int    `json:"price"`
 	Available  int    `json:"available"`
 }
@@ -34,12 +35,13 @@ type Item struct {
 	Types       []ItemType     `json:"types"`
 }
 
-func NewItemSummary(from *repository.ItemSummary, avatar string, price, available int) ItemSummary {
+func NewItemSummary(from *repository.ItemSummary, avatar, bestType string, price, available int) ItemSummary {
 	return ItemSummary{
 		ID:         from.ID,
 		Name:       from.Name,
 		CategoryID: from.CategoryID,
 		Avatar:     avatar,
+		BestType:   bestType,
 		Price:      price,
 		Available:  available,
 	}
