@@ -19,8 +19,9 @@ type ItemType struct {
 }
 
 type ItemProperty struct {
-	Name  string `json:"name"`
-	Value string `json:"value"`
+	Subtitle *string `json:"subtitle,omitempty"`
+	Name     string  `json:"name"`
+	Value    string  `json:"value"`
 }
 
 type Item struct {
@@ -54,8 +55,9 @@ func NewItemType(from *repository.Type) ItemType {
 
 func NewItemProperty(from *repository.Property) ItemProperty {
 	return ItemProperty{
-		Name:  from.Name,
-		Value: from.Value,
+		Subtitle: from.Subtitle,
+		Name:     from.Name,
+		Value:    from.Value,
 	}
 }
 

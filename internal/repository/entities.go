@@ -34,6 +34,7 @@ type Property struct {
 	ID       int64
 	ItemID   int64 `db:"item"`
 	Position int
+	Subtitle *string
 	Name     string
 	Value    string
 }
