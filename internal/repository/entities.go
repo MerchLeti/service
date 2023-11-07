@@ -31,15 +31,17 @@ type Image struct {
 }
 
 type Property struct {
-	ID     int64
-	ItemID int64 `db:"item"`
-	Name   string
-	Value  string
+	ID       int64
+	ItemID   int64 `db:"item"`
+	Position int
+	Name     string
+	Value    string
 }
 
 type Type struct {
 	ID        string
 	ItemID    int64 `db:"item"`
+	Position  int
 	Name      string
 	Price     int
 	Available int

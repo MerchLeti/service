@@ -12,6 +12,7 @@ type ItemSummary struct {
 }
 
 type ItemType struct {
+	ID        string `json:"id"`
 	Name      string `json:"name"`
 	Price     int    `json:"price"`
 	Available int    `json:"available"`
@@ -23,12 +24,12 @@ type ItemProperty struct {
 }
 
 type Item struct {
-	ID         int64               `json:"id"`
-	Name       string              `json:"name"`
-	CategoryID *int64              `json:"category,omitempty"`
-	Images     []string            `json:"images"`
-	Properties []ItemProperty      `json:"properties"`
-	Types      map[string]ItemType `json:"types"`
+	ID         int64          `json:"id"`
+	Name       string         `json:"name"`
+	CategoryID *int64         `json:"category,omitempty"`
+	Images     []string       `json:"images"`
+	Properties []ItemProperty `json:"properties"`
+	Types      []ItemType     `json:"types"`
 }
 
 func NewItemSummary(from *repository.ItemSummary, avatar string, price, available int) ItemSummary {
@@ -44,6 +45,7 @@ func NewItemSummary(from *repository.ItemSummary, avatar string, price, availabl
 
 func NewItemType(from *repository.Type) ItemType {
 	return ItemType{
+		ID:        from.ID,
 		Name:      from.Name,
 		Price:     from.Price,
 		Available: from.Available,
@@ -57,7 +59,7 @@ func NewItemProperty(from *repository.Property) ItemProperty {
 	}
 }
 
-func NewItem(from *repository.Item, images []string, properties []ItemProperty, types map[string]ItemType) Item {
+func NewItem(from *repository.Item, images []string, properties []ItemProperty, types []ItemType) Item {
 	return Item{
 		ID:         from.ID,
 		Name:       from.Name,

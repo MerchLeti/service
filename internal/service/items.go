@@ -108,14 +108,14 @@ func (s *ItemsService) GetItem(ctx context.Context, id int64) (item Item, err er
 	return
 }
 
-func (s *ItemsService) GetTypes(ctx context.Context, id int64) (map[string]ItemType, error) {
+func (s *ItemsService) GetTypes(ctx context.Context, id int64) ([]ItemType, error) {
 	types, err := s.types.GetAll(ctx, id)
 	if err != nil {
 		return nil, err
 	}
-	ans := make(map[string]ItemType)
+	ans := make([]ItemType, 0, len(types))
 	for i := range types {
-		ans[types[i].ID] = NewItemType(&types[i])
+		ans = append(ans, NewItemType(&types[i]))
 	}
 	return ans, nil
 }

@@ -18,7 +18,7 @@ func Properties(ds DataSource) *PropertiesRepository {
 
 func (r *PropertiesRepository) GetAll(ctx context.Context, item int64) ([]Property, error) {
 	var properties []Property
-	err := r.ds.Select(ctx, &properties, `select * from properties where item = $1`, item)
+	err := r.ds.Select(ctx, &properties, `select * from properties where item = $1 order by position`, item)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return []Property{}, nil

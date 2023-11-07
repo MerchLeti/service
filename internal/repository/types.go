@@ -18,7 +18,7 @@ func Types(ds DataSource) *TypesRepository {
 
 func (r *TypesRepository) GetAll(ctx context.Context, item int64) ([]Type, error) {
 	var types []Type
-	err := r.ds.Select(ctx, &types, `select * from types where item = $1`, item)
+	err := r.ds.Select(ctx, &types, `select * from types where item = $1 order by position`, item)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return []Type{}, nil
