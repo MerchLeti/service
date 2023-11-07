@@ -3,7 +3,6 @@ package server
 import (
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/MerchLeti/service/internal/repository"
 	"github.com/MerchLeti/service/internal/server/endpoints"
@@ -25,19 +24,15 @@ func New(db repository.DataSource) *mux.Router {
 	itemsService := service.Items(itemsRepo, categoriesRepo, typesRepo, imagesRepo, properties)
 	items := endpoints.Items(itemsService)
 
-	r.Handle("/api/categories", wrap(categories.GetAll)).Methods(http.MethodGet)
-	r.Handle("/api/categories/{category}", wrap(idkeys.Category.UseIn(items.GetByCategory))).Methods(http.MethodGet)
-	r.Handle("/api/items/{item}", wrap(idkeys.Item.UseIn(items.GetByID))).Methods(http.MethodGet)
-	if frontendExists() {
+	api := r.PathPrefix("/api/").Subrouter()
+	api.Handle("/categories", wrap(categories.GetAll)).Methods(http.MethodGet)
+	api.Handle("/categories/{category}", wrap(idkeys.Category.UseIn(items.GetByCategory))).Methods(http.MethodGet)
+	api.Handle("/items/{item}", wrap(idkeys.Item.UseIn(items.GetByID))).Methods(http.MethodGet)
+	if frontend := endpoints.Frontend(); frontend != nil {
 		log.Println("Including frontend file server")
-		r.PathPrefix("/").Handler(http.FileServer(http.Dir("/frontend/")))
+		r.PathPrefix("/").Handler(frontend)
 	}
 	return r
-}
-
-func frontendExists() bool {
-	stat, err := os.Stat("/frontend")
-	return err == nil && stat.IsDir()
 }
 
 func wrap(nxt func(req *request.Request)) http.Handler {
