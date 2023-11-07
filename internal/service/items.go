@@ -149,7 +149,6 @@ func (s *ItemsService) getItemSummary(ctx context.Context, item int64) (
 		return
 	}
 	price = math.MaxInt
-	bestType = ""
 	priceFromAll := math.MaxInt
 	bestTypeFromAll := ""
 	for _, t := range types {
