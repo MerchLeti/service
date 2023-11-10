@@ -32,12 +32,17 @@ type propertiesRepository interface {
 	GetAll(ctx context.Context, item int64) ([]repository.Property, error)
 }
 
+type descriptionRepository interface {
+	GetAll(ctx context.Context, item int64) ([]repository.Description, error)
+}
+
 type ItemsService struct {
-	items      itemsRepository
-	categories categoriesRepository
-	types      typesRepository
-	images     imagesRepository
-	properties propertiesRepository
+	items        itemsRepository
+	categories   categoriesRepository
+	types        typesRepository
+	images       imagesRepository
+	properties   propertiesRepository
+	descriptions descriptionRepository
 }
 
 func Items(
@@ -46,13 +51,15 @@ func Items(
 	types typesRepository,
 	images imagesRepository,
 	properties propertiesRepository,
+	descriptions descriptionRepository,
 ) *ItemsService {
 	return &ItemsService{
-		items:      items,
-		categories: categories,
-		types:      types,
-		images:     images,
-		properties: properties,
+		items:        items,
+		categories:   categories,
+		types:        types,
+		images:       images,
+		properties:   properties,
+		descriptions: descriptions,
 	}
 }
 
@@ -104,8 +111,24 @@ func (s *ItemsService) GetItem(ctx context.Context, id int64) (item Item, err er
 	if err != nil {
 		return
 	}
-	item = NewItem(&repoItem, images, properties, types)
+	description, err := s.GetDescription(ctx, id)
+	if err != nil {
+		return
+	}
+	item = NewItem(&repoItem, images, description, properties, types)
 	return
+}
+
+func (s *ItemsService) GetDescription(ctx context.Context, id int64) ([]ItemDescription, error) {
+	descs, err := s.descriptions.GetAll(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	ans := make([]ItemDescription, 0, len(descs))
+	for i := range descs {
+		ans = append(ans, NewItemDescription(&descs[i]))
+	}
+	return ans, nil
 }
 
 func (s *ItemsService) GetTypes(ctx context.Context, id int64) ([]ItemType, error) {

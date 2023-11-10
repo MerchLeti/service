@@ -32,7 +32,7 @@ func (r *ItemsRepository) GetItems(ctx context.Context, page, perPage int, categ
 }
 
 func (r *ItemsRepository) GetItem(ctx context.Context, id int64) (result Item, err error) {
-	err = r.ds.Get(ctx, &result, `select * from items where id = $1`, id)
+	err = r.ds.Get(ctx, &result, `select id, name, category from items where id = $1`, id)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			err = ErrNotFound

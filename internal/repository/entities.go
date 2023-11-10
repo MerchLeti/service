@@ -47,3 +47,11 @@ type Type struct {
 	Price     int
 	Available int
 }
+
+type Description struct {
+	ID       string
+	ItemID   int64 `db:"item"`
+	Position int
+	Title    *string
+	Value    string
+}

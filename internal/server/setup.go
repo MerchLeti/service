@@ -15,19 +15,22 @@ import (
 func New(db repository.DataSource) *mux.Router {
 	r := mux.NewRouter()
 
-	categoriesRepo := repository.Categories(db)
-	itemsRepo := repository.Items(db)
-	categories := endpoints.Categories(categoriesRepo)
-	typesRepo := repository.Types(db)
-	imagesRepo := repository.Images(db)
+	categories := repository.Categories(db)
+	items := repository.Items(db)
+	types := repository.Types(db)
+	images := repository.Images(db)
 	properties := repository.Properties(db)
-	itemsService := service.Items(itemsRepo, categoriesRepo, typesRepo, imagesRepo, properties)
-	items := endpoints.Items(itemsService)
+	descriptions := repository.Descriptions(db)
+	itemsService := service.Items(items, categories, types, images, properties, descriptions)
+	itemsEndpoint := endpoints.Items(itemsService)
 
 	api := r.PathPrefix("/api/").Subrouter()
-	api.Handle("/categories", wrap(categories.GetAll)).Methods(http.MethodGet)
-	api.Handle("/categories/{category}", wrap(idkeys.Category.UseIn(items.GetByCategory))).Methods(http.MethodGet)
-	api.Handle("/items/{item}", wrap(idkeys.Item.UseIn(items.GetByID))).Methods(http.MethodGet)
+	api.Handle("/categories", wrap(endpoints.Categories(categories).GetAll)).Methods(http.MethodGet)
+	api.Handle(
+		"/categories/{category}",
+		wrap(idkeys.Category.UseIn(itemsEndpoint.GetByCategory)),
+	).Methods(http.MethodGet)
+	api.Handle("/items/{item}", wrap(idkeys.Item.UseIn(itemsEndpoint.GetByID))).Methods(http.MethodGet)
 	if frontend := endpoints.Frontend(); frontend != nil {
 		log.Println("Including frontend file server")
 		r.PathPrefix("/").Handler(frontend)
