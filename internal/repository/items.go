@@ -35,7 +35,7 @@ func (r *ItemsRepository) GetItem(ctx context.Context, id int64) (result Item, e
 	err = r.ds.Get(
 		ctx,
 		&result,
-		`update items set hits = hits + 1 where id = $1 returning id, name, category`,
+		`update items set hits = hits + 1 where id = $1 returning *`,
 		id,
 	)
 	if err != nil {
